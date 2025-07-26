@@ -251,7 +251,7 @@ function App() {
         <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="sidebar-content">
             <form onSubmit={handleSubmit}>
-              <h1>Waiter Recommendation App</h1>
+              <h1>Settings</h1>
               <div className="form-group">
                 <label>Day:</label>
                 <select value={day} onChange={(e) => setDay(e.target.value)}>
