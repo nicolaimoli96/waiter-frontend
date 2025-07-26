@@ -45,7 +45,7 @@ function ProgressCircle({ actual, target, predicted, color, secondaryColor, size
   // Clamp values
   const safeTarget = Math.max(target, 1);
   const actualPct = Math.min(actual / safeTarget, 1);
-  const predictedPct = Math.min(predicted / safeTarget, 1);
+  // const predictedPct = Math.min(predicted / safeTarget, 1);
   const stroke = 18;
   const radius = (size - stroke) / 2;
   const circ = 2 * Math.PI * radius;
