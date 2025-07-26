@@ -243,7 +243,8 @@ function App() {
           className="sidebar-toggle"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
-          {sidebarOpen ? '✕' : '⚙️'}
+          <span className="sidebar-toggle-icon">{sidebarOpen ? '✕' : '⚙️'}</span>
+          <span className="sidebar-toggle-text">Your Goals</span>
         </button>
 
         {/* Sidebar */}
