@@ -163,7 +163,7 @@ function App() {
     setRecommendations([]);
     setActuals({});
     try {
-      const response = await axios.post('https://waiter-backend-futa.onrender.com', {
+      const response = await axios.post('https://waiter-backend-futa.onrender.com/api/recommend-categories', {
         day,
         session,
         weather,
