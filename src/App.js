@@ -51,7 +51,6 @@ function ProgressCircle({ actual, target, predicted, color, secondaryColor, size
   const circ = 2 * Math.PI * radius;
   // If 100%, offset is 0 (fully closed ring)
   const actualOffset = actualPct >= 1 ? 0 : circ * (1 - actualPct);
-  const predictedOffset = predictedPct >= 1 ? 0 : circ * (1 - predictedPct);
 
   return (
     <svg width={size} height={size} className="progress-circle">
