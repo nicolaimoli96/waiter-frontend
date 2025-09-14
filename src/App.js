@@ -151,11 +151,17 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [waiters, setWaiters] = useState([]);
 
+  // Determine base URL: local dev vs. production
+  const isProduction = process.env.NODE_ENV === 'production';
+  const baseUrl = isProduction 
+    ? 'https://waiter-backend-futa.onrender.com'  // Your Render backend
+    : 'http://localhost:5000';  // Local for dev
+
   // Fetch waiter names from backend on mount
   useEffect(() => {
     const fetchWaiters = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/waiters');
+        const response = await axios.get(`${baseUrl}/api/waiters`);
         setWaiters(response.data.waiters);
         if (response.data.waiters.length > 0) {
           setWaiter(response.data.waiters[0]); // Default to first waiter
@@ -165,7 +171,7 @@ function App() {
       }
     };
     fetchWaiters();
-  }, []);
+  }, [baseUrl]);
 
   // Check if all rings are at 100%
   const allTargetsReached = recommendations.length > 0 && 
@@ -180,7 +186,7 @@ function App() {
     setRecommendations([]);
     setActuals({});
     try {
-      const response = await axios.post('http://localhost:5000/api/recommend-categories', {
+      const response = await axios.post(`${baseUrl}/api/recommend-categories`, {
         day,
         session,
         weather,
