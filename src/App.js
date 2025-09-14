@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
 function MoneyRain({ isActive }) {
   const [shouldStop, setShouldStop] = useState(false);
   
-  React.useEffect(() => {
+  useEffect(() => {
     if (isActive && !shouldStop) {
       const timer = setTimeout(() => {
         setShouldStop(true);
@@ -15,7 +15,7 @@ function MoneyRain({ isActive }) {
     }
   }, [isActive, shouldStop]);
   
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isActive) {
       setShouldStop(false);
     }
@@ -144,11 +144,28 @@ function App() {
   const [day, setDay] = useState('Mon');
   const [session, setSession] = useState('Lunch');
   const [weather, setWeather] = useState('Rain');
-  const [waiter, setWaiter] = useState('Jim');
+  const [waiter, setWaiter] = useState('');
   const [recommendations, setRecommendations] = useState([]);
   const [error, setError] = useState(null);
   const [actuals, setActuals] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [waiters, setWaiters] = useState([]);
+
+  // Fetch waiter names from backend on mount
+  useEffect(() => {
+    const fetchWaiters = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/waiters');
+        setWaiters(response.data.waiters);
+        if (response.data.waiters.length > 0) {
+          setWaiter(response.data.waiters[0]); // Default to first waiter
+        }
+      } catch (err) {
+        console.error('Error fetching waiters:', err);
+      }
+    };
+    fetchWaiters();
+  }, []);
 
   // Check if all rings are at 100%
   const allTargetsReached = recommendations.length > 0 && 
@@ -163,7 +180,7 @@ function App() {
     setRecommendations([]);
     setActuals({});
     try {
-      const response = await axios.post('https://waiter-backend-futa.onrender.com/api/recommend-categories', {
+      const response = await axios.post('http://localhost:5000/api/recommend-categories', {
         day,
         session,
         weather,
@@ -283,11 +300,9 @@ function App() {
               <div className="form-group">
                 <label>Waiter:</label>
                 <select value={waiter} onChange={(e) => setWaiter(e.target.value)}>
-                  <option value="Jim">Jim</option>
-                  <option value="Dwight">Dwight</option>
-                  <option value="Toby">Toby</option>
-                  <option value="Mike">Mike</option>
-                  <option value="Phillies">Phillies</option>
+                  {waiters.map((w, idx) => (
+                    <option key={idx} value={w}>{w}</option>
+                  ))}
                 </select>
               </div>
               <button type="submit">Get Recommendations</button>

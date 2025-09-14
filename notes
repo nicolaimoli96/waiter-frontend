@@ -1,0 +1,8 @@
+if changing the fron end, then do 
+
+git add src/App.js src/App.css
+git commit -m "Update App.js and App.css with recent changes"
+git push
+
+
+to apply the changes
