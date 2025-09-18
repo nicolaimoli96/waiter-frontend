@@ -107,7 +107,12 @@ function ActivityRings({ items, onRingClick }) {
               strokeDashoffset={offset}
               strokeLinecap="round"
               filter="url(#glow)"
-              style={{ transition: 'stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }}
+              style={{ 
+                transition: 'stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1)', 
+                cursor: 'pointer',
+                outline: 'none',
+                WebkitTapHighlightColor: 'transparent'
+              }}
               onClick={(e) => onRingClick && onRingClick(idx, it, e)}
               onTouchEnd={(e) => onRingClick && onRingClick(idx, it, e)}
             />

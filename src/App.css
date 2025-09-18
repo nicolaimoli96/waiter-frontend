@@ -223,18 +223,33 @@
 .activity-rings {
   display: block;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.activity-rings * {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .activity-rings circle {
-  outline: none;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .activity-rings circle:focus {
-  outline: none;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .activity-rings circle:active {
-  outline: none;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.activity-rings circle:hover {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .activity-center-text .ring-center-title {
