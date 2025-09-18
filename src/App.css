@@ -33,7 +33,7 @@
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 0;
-  margin: 0;
+  margin: 20px 0 0 0;
   min-width: auto;
   max-width: none;
   display: flex;
@@ -45,11 +45,49 @@
 }
 
 .activity-rings-container {
-  padding: 60px 28px 16px;
+  padding: 20px 28px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
+}
+
+.rings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
+
+.greeting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.greeting-text {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.waiter-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #00f5ff, #ff0080);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  letter-spacing: 0.5px;
+}
+
+.weather-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
 }
 
 .rings-layout {
@@ -569,34 +607,34 @@
 
 .sidebar-toggle {
   position: fixed;
-  top: 20px;
+  top: 15px;
   left: 20px;
   width: auto;
-  height: 50px;
+  height: 40px;
   background: #000000;
   color: #ffffff;
   border: none;
-  border-radius: 25px;
-  font-size: 1.2rem;
+  border-radius: 20px;
+  font-size: 1rem;
   cursor: pointer;
   z-index: 1000;
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 22px;
+  gap: 8px;
+  padding: 0 16px;
   font-family: 'Gotham', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .sidebar-toggle-icon {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   display: flex;
   align-items: center;
 }
 
 .sidebar-toggle-text {
-  font-size: 1.08rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.5px;
   color: #fff;

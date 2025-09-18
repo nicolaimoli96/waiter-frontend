@@ -222,8 +222,28 @@ function App() {
                     idx,
                   };
                 });
+                
+                const getWeatherIcon = (weather) => {
+                  switch(weather) {
+                    case 'Rain': return '🌧️';
+                    case 'Wind': return '💨';
+                    case 'Cloud': return '☁️';
+                    case 'Sunny': return '☀️';
+                    default: return '☀️';
+                  }
+                };
+                
                 return (
                   <>
+                    <div className="rings-header">
+                      <div className="greeting">
+                        <span className="greeting-text">Hi</span>
+                        <span className="waiter-name">{waiter}</span>
+                      </div>
+                      <div className="weather-icon">
+                        {getWeatherIcon(weather)}
+                      </div>
+                    </div>
                     <div 
                       className="rings-layout"
                       onClick={() => setSelectedRing(null)}
