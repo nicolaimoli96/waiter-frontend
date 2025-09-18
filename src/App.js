@@ -41,103 +41,93 @@ function MoneyRain({ isActive }) {
   );
 }
 
-function ProgressCircle({ actual, target, predicted, color, secondaryColor, size = 150, gradId = 'main', gradId2 = 'secondary' }) {
-  // Clamp values
-  const safeTarget = Math.max(target, 1);
-  const actualPct = Math.min(actual / safeTarget, 1);
-  // const predictedPct = Math.min(predicted / safeTarget, 1);
-  const stroke = 18;
-  const radius = (size - stroke) / 2;
-  const circ = 2 * Math.PI * radius;
-  // If 100%, offset is 0 (fully closed ring)
-  const actualOffset = actualPct >= 1 ? 0 : circ * (1 - actualPct);
+function ActivityRings({ items, onRingClick }) {
+  const size = 320;
+  const center = size / 2;
+  const ringSpecs = [
+    { stroke: 20, inset: 0 },
+    { stroke: 20, inset: 30 },
+    { stroke: 20, inset: 60 },
+  ];
 
   return (
-    <svg width={size} height={size} className="progress-circle">
+    <svg width={size} height={size} className="activity-rings">
       <defs>
-        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={color[0]} />
-          <stop offset="100%" stopColor={color[1]} />
-        </linearGradient>
+        {items.map((it, idx) => (
+          <linearGradient key={idx} id={`ringGrad${idx}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={it.color[0]} />
+            <stop offset="100%" stopColor={it.color[1]} />
+          </linearGradient>
+        ))}
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <feMerge> 
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
       </defs>
-      {/* Background ring */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke="#23272f"
-        strokeWidth={stroke}
-        fill="none"
-      />
-      {/* Actual ring (main, on top) */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke={`url(#${gradId})`}
-        strokeWidth={stroke}
-        fill="none"
-        strokeDasharray={circ}
-        strokeDashoffset={actualOffset}
-        strokeLinecap="round"
-        style={{ transition: 'stroke-dashoffset 0.35s' }}
-      />
-      {/* Center text or tick */}
-      {actualPct >= 1 ? (
-        <g>
-          <path
-            d="M50 75 L70 95 L100 55"
+      
+      {/* Background rings */}
+      {items.map((it, idx) => {
+        const spec = ringSpecs[idx];
+        const radius = (size - spec.stroke) / 2 - spec.inset;
+        return (
+          <circle
+            key={`bg-${idx}`}
+            cx={center}
+            cy={center}
+            r={radius}
+            stroke="rgba(255,255,255,0.08)"
+            strokeWidth={spec.stroke}
             fill="none"
-            stroke="#4cd964"
-            strokeWidth="5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
           />
-        </g>
-      ) : (
-        <>
-          <text
-            x="50%"
-            y="50%"
-            textAnchor="middle"
-            dy="-0.2em"
-            fontSize="1.35rem"
-            fill="#fff"
-            fontWeight="bold"
-            style={{ textShadow: '0 2px 8px rgba(0,0,0,0.18)' }}
-          >
-            {target}
-          </text>
-          <text
-            x="50%"
-            y="50%"
-            textAnchor="middle"
-            dy="1.3em"
-            fontSize="0.85rem"
-            fill="#b3b3b3"
-            fontWeight="500"
-          >
-            Target
-          </text>
-        </>
-      )}
+        );
+      })}
+      
+      {/* Progress rings */}
+      {items.map((it, idx) => {
+        const spec = ringSpecs[idx];
+        const radius = (size - spec.stroke) / 2 - spec.inset;
+        const circumference = 2 * Math.PI * radius;
+        const safeTarget = Math.max(it.target, 1);
+        const pct = Math.min(it.actual / safeTarget, 1);
+        const offset = pct >= 1 ? 0 : circumference * (1 - pct);
+        
+        return (
+          <g key={idx} className="activity-ring">
+            <circle
+              cx={center}
+              cy={center}
+              r={radius}
+              stroke={`url(#ringGrad${idx})`}
+              strokeWidth={spec.stroke}
+              fill="none"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              strokeLinecap="round"
+              filter="url(#glow)"
+              style={{ transition: 'stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }}
+              onClick={(e) => onRingClick && onRingClick(idx, it, e)}
+              onTouchEnd={(e) => onRingClick && onRingClick(idx, it, e)}
+            />
+          </g>
+        );
+      })}
+      
+      
+      {/* Clean center - no content */}
+      <g className="activity-center-text">
+        <circle cx={center} cy={center} r={50} fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+      </g>
     </svg>
   );
 }
 
 const ringColors = [
-  {
-    color: ['#00f2fe', '#4facfe'], // cyan to blue
-    secondary: ['#43e97b', '#38f9d7'], // green to teal
-  },
-  {
-    color: ['#fa709a', '#fee140'], // pink to yellow
-    secondary: ['#7f53ac', '#647dee'], // purple to blue
-  },
-  {
-    color: ['#f7971e', '#ffd200'], // orange to yellow
-    secondary: ['#21d4fd', '#b721ff'], // blue to purple
-  },
+  { color: ['#00f5ff', '#0099ff'] }, // electric cyan
+  { color: ['#ff0080', '#ff4081'] }, // hot pink
+  { color: ['#00ff88', '#00e676'] }, // neon green
 ];
 
 function App() {
@@ -150,6 +140,8 @@ function App() {
   const [actuals, setActuals] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [waiters, setWaiters] = useState([]);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedRing, setSelectedRing] = useState(null);
 
   // Determine base URL: local dev vs. production
   const isProduction = process.env.NODE_ENV === 'production';
@@ -210,53 +202,140 @@ function App() {
       <header className="App-header">
         <div className="card">
           {recommendations.length > 0 && (
-            <div className="recommendations-rings">
-              {recommendations.slice(0, 3).map((rec, idx) => {
-                const predictedInt = Math.round(rec.predicted_quantity);
-                const actual = actuals[idx] !== undefined ? Number(actuals[idx]) : predictedInt;
-                const { color, secondary } = ringColors[idx % ringColors.length];
+            <div className="activity-rings-container">
+              {(() => {
+                const items = recommendations.slice(0, 3).map((rec, idx) => {
+                  const predictedInt = Math.round(rec.predicted_quantity);
+                  const actual = actuals[idx] !== undefined ? Number(actuals[idx]) : predictedInt;
+                  const { color } = ringColors[idx % ringColors.length];
+                  return {
+                    category: rec.category,
+                    target: rec.target_quantity,
+                    predicted: predictedInt,
+                    actual,
+                    color,
+                    idx,
+                  };
+                });
                 return (
-                  <div className="recommendation-section" key={idx}>
-                    <div className="ring-labels">
-                      <span className="category-label">{rec.category}</span>
+                  <>
+                    <div 
+                      className="rings-layout"
+                      onClick={() => setSelectedRing(null)}
+                      onTouchEnd={() => setSelectedRing(null)}
+                    >
+                      <ActivityRings 
+                        items={items} 
+                        onRingClick={(idx, item, event) => {
+                          event.stopPropagation();
+                          setSelectedRing(idx);
+                        }}
+                      />
+                      <div className="right-panel">
+                        {selectedRing !== null ? (
+                          <div className="selected-ring-info">
+                            <div className="selected-header">
+                              <div 
+                                className="selected-dot" 
+                                style={{ background: `linear-gradient(135deg, ${items[selectedRing].color[0]}, ${items[selectedRing].color[1]})` }} 
+                              />
+                              <span className="selected-category">{items[selectedRing].category}</span>
+                            </div>
+                            <div className="target-display">
+                              <span className="target-label">Actual</span>
+                              <span 
+                                className="target-number"
+                                style={{ 
+                                  color: items[selectedRing].color[0],
+                                  textShadow: `0 0 20px ${items[selectedRing].color[0]}`,
+                                  filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))'
+                                }}
+                              >
+                                {items[selectedRing].actual}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="targets-table">
+                            <div className="table-header">
+                              <span className="header-text">TARGETS</span>
+                            </div>
+                            {items.map((it, i) => (
+                              <div key={i} className="target-row">
+                                <div 
+                                  className="target-dot" 
+                                  style={{ background: `linear-gradient(135deg, ${it.color[0]}, ${it.color[1]})` }} 
+                                />
+                                <span className="target-category">{it.category}</span>
+                                <span 
+                                  className="target-value"
+                                  style={{ 
+                                    background: `linear-gradient(135deg, ${it.color[0]}, ${it.color[1]})`,
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text',
+                                    color: 'transparent',
+                                    textShadow: 'none'
+                                  }}
+                                >
+                                  {it.target}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <ProgressCircle
-                      actual={actual}
-                      target={rec.target_quantity}
-                      predicted={predictedInt}
-                      color={color}
-                      secondaryColor={secondary}
-                      gradId={`main${idx}`}
-                      gradId2={`secondary${idx}`}
-                    />
-                    <div className="quantities">
-                      <div className="target-below">
-                        <span className="target-label">Target:</span> <span className="target-value">{rec.target_quantity}</span>
-                      </div>
-                      <div className="quantity-row">
-                        <span className="label">Actual</span>
-                        <input
-                          type="number"
-                          min="0"
-                          step="1"
-                          className="actual-input"
-                          value={actuals[idx] ?? predictedInt}
-                          onChange={e => {
-                            const val = e.target.value;
-                            if (val === '' || /^\d+$/.test(val)) {
-                              handleActualChange(idx, val === '' ? '' : parseInt(val, 10));
-                            }
-                          }}
-                        />
-                      </div>
-                      <div className="quantity-row">
-                        <span className="label">Predicted</span>
-                        <span className="value">{predictedInt}</span>
-                      </div>
+                    <div className="actuals-inline">
+                      {items.map((it, i) => (
+                        <div key={i} className="actuals-chip">
+                          <span className="chip-dot" style={{ background: `linear-gradient(135deg, ${it.color[0]}, ${it.color[1]})` }} />
+                          <span className="chip-label">{it.category}</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            className="actual-input chip-input"
+                            value={actuals[it.idx] ?? it.predicted}
+                            onChange={e => {
+                              const val = e.target.value;
+                              if (val === '' || /^\d+$/.test(val)) {
+                                handleActualChange(it.idx, val === '' ? '' : parseInt(val, 10));
+                              }
+                            }}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                    <div className="details-section">
+                      <button 
+                        className="details-button"
+                        onClick={() => setDetailsOpen(!detailsOpen)}
+                      >
+                        <span className="details-icon">{detailsOpen ? '▼' : '▶'}</span>
+                        <span className="details-text">Details</span>
+                      </button>
+                      {detailsOpen && (
+                        <div className="rings-stats">
+                          {items.map((it, i) => (
+                            <div key={i} className="rings-row">
+                              <div className="rings-row-left">
+                                <span className="row-category">{it.category}</span>
+                              </div>
+                              <div className="rings-row-right">
+                                <div className="row-stat">
+                                  <span className="stat-label">Predicted</span>
+                                  <span className="stat-value">{it.predicted}</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </>
                 );
-              })}
+              })()}
             </div>
           )}
         </div>
